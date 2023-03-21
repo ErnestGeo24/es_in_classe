@@ -3,16 +3,20 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return render_template("post.html")
+    return render_template("imc.html")
 
-@app.route("/login", methods = ["POST"])
-def login():
-    user = request.form["user"]
-    password = request.form["password"]
-    if user == "admin" and password == "xxx123##":
-        return render_template("login.html", user = user, password = password)
+@app.route("/imcresults", methods = ["GET"])
+def imcresults():
+    peso = float(request.args.get("peso"))
+    altezza = float(request.args.get("altezza"))
+    imc = peso/(altezza**2)
+    if imc >= 18.50 and imc <= 24.99:
+        return render_template("imcresults.html", stato = "normopeso", immagine = "/static/images/dietabilanciata.jpeg")
+    elif imc <= 18.99:
+        return render_template("imcresults.html", stato = "sottopeso", immagine = "/static/images/dietaingrassante.jpeg")
     else:
-        return render_template("nonlogin.html")
+        return render_template("imcresults.html", stato = "sovrapeso", immagine = "/static/images/dietasovrapeso.jpg")
+
 
 if __name__ == '__main__':
   app.run(host='0.0.0.0', port=3245, debug=True)
